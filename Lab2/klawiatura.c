@@ -1,20 +1,42 @@
 #include <avr/io.h>
 #include "klawiatura.h"
 void SW_numer (unsigned int SW_numer) {
-	unsigned int w = (SW_numer - 1) / 4;
-	unsigned int k = (SW_numer - 1) % 4;
-	DDRC |= w;
-	DDRC &= ~k;
+	unsigned int bw = (SW_numer - 1) / 4;
+	unsigned int bk = 4 + (SW_numer - 1) % 4;
+	DDRD &= ~_BV(bw);
+	DDRD |= _BV(bk);
+	PORTD |= _BV(bk);
 }
 unsigned int SW_odczyt (unsigned int SW_numer) {
-	if ((PINC | ~_BV(SW_numer / 4)) && (PINC & _BV(4 + SW_numer % 4))) return 0;
-	return 1;
+	unsigned int bw = (SW_numer - 1) / 4;
+	unsigned int bk = 4 + (SW_numer - 1) % 4;
+	uint8_t w = 0x00, k = 0x00;
+	if ((PIND & 0x0F) != 0x0F) {
+		w = PIND & 0x0F;
+		w = (~w & 0x0F);
+		DDRD ^= 0xFF;
+		PORTD ^= 0xFF;
+		_delay_us(2);
+		k = PIND & 0xF0;
+		k = (~k & 0xF0);
+		DDRD ^= 0xFF;
+		PORTD ^= 0xFF;
+	}
+	if (w == _BV(bw) && k == _BV(bk)) return 1;
+	return 0;
 }
 unsigned int SW_czytaj (void) {
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			if (SW_odczyt(i * 4 + j)) return i * 4 + j;
-		}
+	uint8_t w = 0x00, k = 0x00;
+	if ((PIND & 0x0F) != 0x0F) {
+		w = PIND & 0x0F;
+		w = (~w & 0x0F);
+		DDRD ^= 0xFF;
+		PORTD ^= 0xFF;
+		_delay_us(2);
+		k = PIND & 0xF0;
+		k = (~k & 0xF0);
+		DDRD ^= 0xFF;
+		PORTD ^= 0xFF;
 	}
-	return 0;
+	return (w | k);
 }
