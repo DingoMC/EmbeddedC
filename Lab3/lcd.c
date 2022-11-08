@@ -72,8 +72,12 @@ void pisz_xy (char *str, unsigned int wiersz, unsigned int kolumna) {
 	LCD_sendCommand(cmd);
 	LCD_sendString(str);
 }
-void LCD_clr_1();
-void LCD_clr_2();
+void LCD_clr_1 () {
+	pisz_1 ("                ");
+}
+void LCD_clr_2() {
+	pisz_2 ("                ");
+}
 void LCD_clr_xy();
 void LCD_clear() {
 	LCD_sendCommand(0x01);
