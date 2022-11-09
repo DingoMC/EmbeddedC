@@ -78,7 +78,12 @@ void LCD_clr_1 () {
 void LCD_clr_2() {
 	pisz_2 ("                ");
 }
-void LCD_clr_xy();
+void LCD_clr_xy(int x, int y) {
+	LCD_sendCommand(0b10000000 | (x * 0x40 + y));
+	for(int i = x; i < 16; i++){
+		LCD_sendChar(' ');
+	}
+}
 void LCD_clear() {
 	LCD_sendCommand(0x01);
 	_delay_ms(2);
