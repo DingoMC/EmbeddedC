@@ -27,8 +27,8 @@ void LCD_init (void) {
 	_delay_ms(10);
 	LCD_sendCommand(0x28);
 	LCD_sendCommand(0x0D);
-	LCD_sendCommand(0x06);							// Ustawienie kursora
-	LCD_sendCommand(0x80);
+	LCD_sendCommand(0x06);							// Ustawienie trybu kursora przesunięcie w prawo
+	LCD_sendCommand(0x80);							// Ustawienie kursora
 }
 
 void LCD_sendChar (unsigned char data) {
@@ -59,10 +59,10 @@ void pisz_2 (char *str) {
 	LCD_sendString(str);
 }
 void pisz_xy (char *str, unsigned int wiersz, unsigned int kolumna) {
-	unsigned int cmd = 0x00;
-	if (wiersz == 0) cmd |= 0x80;
-	else cmd |= 0xC0;
-	unsigned k = 0;
+	unsigned int cmd = 0x00;		// Zmienna komendy
+	if (wiersz == 0) cmd |= 0x80;	// Wiersz 1 - komenda 0x8k
+	else cmd |= 0xC0;				// Wiersz 2 - komenda 0xCk
+	unsigned k = 0;					// Dodanie numeru kolumny w sposób binarny do komendy
 	while (kolumna > 0) {
 		if (kolumna % 2 == 0) cmd &= ~_BV(k);
 		else cmd |= _BV(k);
@@ -73,15 +73,15 @@ void pisz_xy (char *str, unsigned int wiersz, unsigned int kolumna) {
 	LCD_sendString(str);
 }
 void LCD_clr_1 () {
-	pisz_1 ("                ");
+	pisz_1 ("                ");	// 16 spacji czysci cały wiersz
 }
 void LCD_clr_2() {
-	pisz_2 ("                ");
+	pisz_2 ("                ");	// 16 spacji czysci cały wiersz
 }
 void LCD_clr_xy(int x, int y) {
-	LCD_sendCommand(0b10000000 | (x * 0x40 + y));
-	for(int i = x; i < 16; i++){
-		LCD_sendChar(' ');
+	LCD_sendCommand(0b10000000 | (x * 0x40 + y));	// Ustaw kursor
+	for(int i = x; i < 16; i++) {
+		LCD_sendChar(' ');							// Wyślij puste znaki
 	}
 }
 void LCD_clear() {
