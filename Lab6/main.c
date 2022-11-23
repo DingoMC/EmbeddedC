@@ -42,7 +42,7 @@ void UART_SendString (char *str) {
 static unsigned char cnt = 0;
 
 ISR (TIMER0_COMP_vect) {
-	if (++cnt == 50) {
+	if (++cnt == 20) {
 		cnt = 0;
 		PORTA ^= 0b00000001;
 	}
@@ -52,17 +52,19 @@ ISR (USART_RXC_vect) {
 	static char x;
 	x = UDR;
 	if ((int) x >= 49 && (int) x <= 55) {
-		x++;
-		PORTA ^= 0b00000001 << (x - 49);
+		PORTA ^= 0b00000001 << (x - 48);
+		UART_SendString("Wcisnieto [");
+		UART_TxChar(x);
+		UART_SendString("]\r\n");
 	}
-	else if(x == 'c') {
+	else if (x == 'c') {
 		PORTA = 0b00000000;
 	}
-	else if(x == 's') {
+	else if (x == 's') {
 		PORTA = 0b11111111;
 	}
 	else {
-		UART_SendString("Wcisnieto zly klawisz");
+		UART_SendString("Bledny klawisz!\r\n");
 	}
 }
 
@@ -73,10 +75,10 @@ int main(void) {
 	
 	// Zadanie 2
 	char c;
-	UART_SendString("Nacisnij klawisz [d]:");
+	UART_SendString("Nacisnij klawisz [d]: ");
 	c = UART_RxChar();
-	if (c == 'd') UART_SendString("Znak OK\r");
-	else UART_SendString("Bledny Znak!\n");
+	if (c == 'd') UART_SendString("Znak OK\r\n");
+	else UART_SendString("Bledny Znak!\r\n");
 	
 	// Zadanie 3
 	DDRA = 0b11111111;	// LED in
