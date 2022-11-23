@@ -1,9 +1,3 @@
-/*
- * GccApplication1.c
- *
- * Created: 23.11.2022 10:20:12
- * Author : Student_PL
- */ 
 // PA0-7 -> D0-7
 #define F_CPU 8000000UL
 #include <avr/io.h>
@@ -12,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define L0_DLY 500
 #define USART_BAUDRATE 9600
 #define BAUD_PRESCALE (((F_CPU / (9600 * 16UL))) - 1)
 
@@ -21,6 +16,7 @@ void UART_Init (void) {
 	UBRRL = BAUD_PRESCALE;
 	UBRRH = (BAUD_PRESCALE >> 8);
 }
+
 unsigned char UART_RxChar () {
 	while ((UCSRA & (1 << RXC)) == 0);
 	return(UDR);
@@ -32,17 +28,17 @@ void UART_TxChar (char ch) {
 }
 
 void UART_SendString (char *str) {
-	unsigned char j=0;
-	while (str[j]!=0) {
-		UART_TxChar(str[j]);
-		j++;
+	unsigned char c = 0;
+	while (str[c] != 0) {
+		UART_TxChar(str[c]);
+		c++;
 	}
 }
 
-static unsigned char cnt = 0;
+static unsigned cnt = 0;
 
 ISR (TIMER0_COMP_vect) {
-	if (++cnt == 20) {
+	if (++cnt == L0_DLY / 20) {
 		cnt = 0;
 		PORTA ^= 0b00000001;
 	}
@@ -85,9 +81,9 @@ int main(void) {
 	PORTA = 0b00000000;	// Led wył.
 	TCCR0 |= 1 << WGM01;
 	TCCR0 &= ~(1 << WGM00);
-	OCR0 = 156;
 	TCCR0 |= (1 << CS02) | (1 << CS00);
 	TCCR0 &= ~(1 << CS01);
+	OCR0 = 156;
 	TIMSK |= 1 << OCIE0;
 	TIFR |= 1 << OCF0;
 	sei();
