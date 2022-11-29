@@ -4,64 +4,92 @@
 #include <avr/interrupt.h>
 
 volatile int cnt = 0;
-volatile int l_max = 10;
-
-void zad1(){
-	TCCR0 |= _BV(CS00) | _BV(CS02);
-	for(int i = 0; i < 10; i++){
-		TCNT0 = 159;
-		while((TIFR & 0x01)==0);
-		TIFR = 0x1;
-	}
-	TCCR0 = 0;
-	PORTA ^= _BV(0);
-}
+volatile int led_time = 5;
 
 ISR (TIMER0_OVF_vect) {
-	cnt++;
-	if (cnt >= l_max) {
-		PORTA ^= _BV(0);
+	TCNT0 = 159;
+	if (++cnt == 10) {
+		PORTA ^= 0x01;
 		cnt = 0;
 	}
-	TCNT0 = 159;
 }
-int sw () {
-	int i;
-	unsigned char cz;
-	for(i = 4; i < 8; i++){
-		PORTC = ~_BV(i);
-		_delay_ms(1);
-		cz = ~PINC & 0x0f;
-		if (cz) {
-			return (i-3) + (cz-1)*4;
+ISR (TIMER0_OVF_vect) {
+	TCNT0 = 159;
+	if (++cnt == >= led_time) {
+		PORTB ^= 0x01;
+		cnt = 0;
+	}
+}
+ISR (INT0_vect) {
+	_delay_ms(15);
+	GIFR |= _BV(INTF0);
+	if ((PIND & 0x04) == 0) {
+		uint8_t i = ((~PINA) & 0x0F);
+		uint8_t w = 0, k = 0, p = 0;
+		while (i) {
+			w++;
+			i = i >> 1;
+		}
+		while (k < 4) {
+			PORTA |= _BV(k+4);
+			_delay_us(2);
+			if ((PINA & 0x0F) == 0x0F) break;
+			PORTA &= ~_BV(k+4);
+			k++;
+		}
+		PORTA &= 0x0F;
+		p = (w - 1) * 4 + k;
+		if (p < 14) led_time = p + 1;
+		else if (p == 14) TCCR0 &= ~(_BV(CS00) | _BV(CS02));
+		else {
+			cnt = 0;
+			TCNT0 = 159;
+			TCCR0 |= _BV(CS00) | _BV(CS02);
 		}
 	}
-	return 0;
-}
-ISR (INT1_vect) {
-	l_max = sw();
 }
 int main(void)
 {
-	// zad. 1, 2
-	/*TCNT0 = 157;
-	TCCR0 = _BV(CS00) | _BV(CS02);
-	TIMSK = (1 << TOIE0);
-	sei();*/
-	// zad. 3
-	
+	// Zadanie 1
+	DDRA |= 0x01;
+	PORTA |= 0x01;
 	TCNT0 = 159;
 	TCCR0 = _BV(CS00) | _BV(CS02);
-	TIMSK = (1<<TOIE0);
-	GICR = _BV(INT1);
-	MCUCR = _BV(ISC11) | _BV(ISC10);	
+	while (1) {
+		while (!(TIFR & (1 << TOV0)));
+		TIFR |= (1 << TOV0);
+		TCNT0 = 159;
+		if (++cnt == 10) {
+			PORTA ^= 0x01;
+			cnt = 0;
+		}
+	}
+	// Zadanie 2
+	DDRA |= 0x01;
+	PORTA |= 0x01;
+	TCNT0 = 159;
+	TIMSK |= _BV(TOIE0);
+	TIFR |= _BV(TOV0);
+	TCCR0 |= _BV(CS00) | _BV(CS02);
 	sei();
-	DDRA = 0xff;
-	DDRC = 0xF0;
-	PORTC = 0x0F;
-    while (1) {
-		//zad1();
-    }
+	// Zadanie 3
+	DDRA = 0xF0;
+	PORTA = 0x0F;
+	DDRC |= 0x01;
+	PORTC |= 0x01;
+	DDRD &= ~_BV(2);
+	PORTD |= 0x40;
+	MCUCR |= _BV(ISC01);
+	GICR |= _BV(INT0);
+	GIFR |= _BV(INTF0);
+	TCNT0 = 159;
+	TIMSK |= _BV(TOIE0);
+	TIFR |= _BV(TOV0);
+	TCCR0 |= _BV(CS00) | _BV(CS02);
+	sei();
+	while (1) {
+		
+	}
 	return 0;
 }
 
