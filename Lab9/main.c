@@ -5,6 +5,15 @@ const int options = 4;
 int maxdepths[4] = {1, 2, 2, 1};
 int suboptions[4] = {0, 4, 2, 0};
 
+void czas(int ms){
+  volatile int a,b;
+  for(a=0;a<=ms;a++){
+    for(b=0;b<=3000;b++){
+      __asm__("NOP");
+    }
+  }
+}
+
 void showMainMenu (int sel) {
     LCDClearScreen();
     // Glowne Menu: Zaznaczona opcja - czarny tekst na bialym tle
@@ -23,7 +32,7 @@ void showSubmenu (int sel, int subsel) {
         LCDPutStr("3.trojkat", 60, 5, MEDIUM, (subsel == 2) ? WHITE : BLACK, (subsel == 2) ? BLACK : WHITE);
         LCDPutStr("4.trapez", 80, 5, MEDIUM, (subsel == 3) ? WHITE : BLACK, (subsel == 3) ? BLACK : WHITE);
     }
-    if (sel == 3) {
+    if (sel == 2) {
         LCDClearScreen();
         LCDPutStr("1.obraz 1", 20, 5, MEDIUM, (subsel == 0) ? WHITE : BLACK, (subsel == 0) ? BLACK : WHITE);
         LCDPutStr("2.obraz 2", 40, 5, MEDIUM, (subsel == 1) ? WHITE : BLACK, (subsel == 1) ? BLACK : WHITE);
@@ -62,9 +71,11 @@ void showContent (int sel, int subsel) {
 }
 
 int main () {
-    PIOA_PER |= (1 << 7 | 1 << 8 | 1 << 9 | 1 << 14 | 1 << 15);  // Kontrola joysticka (7 - gora, 8 - lewo, 9 - prawo, 14 - dol, 15 - wcisniecie)
-    PIOB_PER |= (1 << 23 | 1 << 24);  // Kontrola - przycisk lewy i prawy
-    PIOB_ODR = (1 << 23 | 1 << 24);   // Przyciski jako wejscie
+    PMC_PCER = 1 << 3;
+    PMC_PCER |= 1 << 2;
+    PIOA_PER |= (1 << 7 | 1 << 8 | 1 << 9 | 1 << 14 | 1 << 15);// Kontrola joysticka (7 - lewo, 8 - dol, 9 - gora, 14 - prawo, 15 - wcisniecie)
+    PIOB_PER |= (1 << 24 | 1 << 25);  // Kontrola - przycisk lewy i prawy
+    PIOB_ODR = (1 << 24 | 1 << 25);   // Przyciski jako wejscie
     PIOA_ODR = (1 << 7 | 1 << 8 | 1 << 9 | 1 << 14 | 1 << 15);  // Joystick jako wejscie
     InitLCD();
     SetContrast(30);
@@ -74,7 +85,7 @@ int main () {
     showMainMenu(selection[0]);
     while (1) {
         // Powrot
-        /*if ((PIOA_PDSR & 1 << 8) == 0 || (PIOB_PDSR & 1 << 23) == 0) {
+        if ((PIOB_PDSR & 1 << 24) == 0 || (PIOA_PDSR & 1 << 7) == 0) {
             if (depth > 0) {
                 depth--;
                 if (depth == 0) {
@@ -83,20 +94,22 @@ int main () {
                 }
                 if (depth == 1 && depth < maxdepths[selection[0]]) showSubmenu(selection[0], selection[1]);
             }
-        }*/
+            czas(250);
+        }
         // Enter
-        if ((PIOA_PDSR & 1 << 9) == 0 || (PIOA_PDSR & 1 << 15) == 0 || (PIOB_PDSR & 1 << 24) == 0) {
+        if ((PIOB_PDSR & (1 << 25)) == 0 || (PIOA_PDSR & 1 << 14) == 0 || (PIOA_PDSR & 1 << 15) == 0) {
             if (depth < maxdepths[selection[0]]) {
                 depth++;
                 if (depth == 1) {
                     if (depth < maxdepths[selection[0]]) showSubmenu(selection[0], selection[1]);
                     else showContent(selection[0], selection[1]);
                 }
-                if (depth == 2) showContent(selection[0], selection[1]);
+                else if (depth == 2) showContent(selection[0], selection[1]);
             }
+            czas(250);
         }
-        // Gora
-        /*if ((PIOA_PDSR & 1 << 7) == 0) {
+        // Dol
+        if ((PIOA_PDSR & (1 << 8)) == 0) {
             if (depth < maxdepths[selection[0]]) {
                 selection[depth]++;
                 if (depth == 0) {
@@ -108,9 +121,10 @@ int main () {
                     showSubmenu(selection[0], selection[1]);
                 }
             }
-        }*/
-        // Dol
-        /*if ((PIOA_PDSR & 1 << 14) == 0) {
+            czas(250);
+        }
+        // Gora
+        if ((PIOA_PDSR & 1 << 9) == 0) {
             if (depth < maxdepths[selection[0]]) {
                 selection[depth]--;
                 if (depth == 0) {
@@ -122,6 +136,7 @@ int main () {
                     showSubmenu(selection[0], selection[1]);
                 }
             }
-        }*/
+            czas(250);
+        }
     }
 }
