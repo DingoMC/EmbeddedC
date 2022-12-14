@@ -1,54 +1,54 @@
 #include <targets\AT91SAM7.h>
 #include "pcf8833u8_lcd.h"
 
-const int options = 4
-const int maxdepths[options] = {1, 2, 2, 1};
-const int suboptions[options] = {0, 4, 2, 0};
+const int options = 4;
+int maxdepths[4] = {1, 2, 2, 1};
+int suboptions[4] = {0, 4, 2, 0};
 
 void showMainMenu (int sel) {
     LCDClearScreen();
     // Glowne Menu: Zaznaczona opcja - czarny tekst na bialym tle
-    LCDPutStr("1. Autor", 20, 20, (sel == 0) ? BLACK : WHITE, (sel == 0) ? WHITE : BLACK);
-    LCDPutStr("2. Figury", 40, 20, (sel == 1) ? BLACK : WHITE, (sel == 1) ? WHITE : BLACK);
-    LCDPutStr("3. Obraz", 60, 20, (sel == 2) ? BLACK : WHITE, (sel == 2) ? WHITE : BLACK);
-    LCDPutStr("4. Tekst i obraz", 80, 20, (sel == 3) ? BLACK : WHITE, (sel == 3) ? WHITE : BLACK);
+    LCDPutStr("1.Autor", 20, 5, MEDIUM, (sel == 0) ? WHITE : BLACK, (sel == 0) ? BLACK : WHITE);
+    LCDPutStr("2.Figury", 40, 5, MEDIUM, (sel == 1) ? WHITE : BLACK, (sel == 1) ? BLACK : WHITE);
+    LCDPutStr("3.Obraz", 60, 5, MEDIUM, (sel == 2) ? WHITE : BLACK, (sel == 2) ? BLACK : WHITE);
+    LCDPutStr("4.Tekst i obraz", 80, 5, MEDIUM, (sel == 3) ? WHITE : BLACK, (sel == 3) ? BLACK : WHITE);
 }
 
 void showSubmenu (int sel, int subsel) {
     if (sel == 0 || sel == 3) return;
     if (sel == 1) {
         LCDClearScreen();
-        LCDPutStr("1. okrag", 20, 20, (subsel == 0) ? BLACK : WHITE, (subsel == 0) ? WHITE : BLACK);
-        LCDPutStr("2. kwadrat", 40, 20, (subsel == 1) ? BLACK : WHITE, (subsel == 1) ? WHITE : BLACK);
-        LCDPutStr("3. trojkat", 60, 20, (subsel == 2) ? BLACK : WHITE, (subsel == 2) ? WHITE : BLACK);
-        LCDPutStr("4. trapez", 80, 20, (subsel == 3) ? BLACK : WHITE, (subsel == 3) ? WHITE : BLACK);
+        LCDPutStr("1.okrag", 20, 5, MEDIUM, (subsel == 0) ? WHITE : BLACK, (subsel == 0) ? BLACK : WHITE);
+        LCDPutStr("2.kwadrat", 40, 5, MEDIUM, (subsel == 1) ? WHITE : BLACK, (subsel == 1) ? BLACK : WHITE);
+        LCDPutStr("3.trojkat", 60, 5, MEDIUM, (subsel == 2) ? WHITE : BLACK, (subsel == 2) ? BLACK : WHITE);
+        LCDPutStr("4.trapez", 80, 5, MEDIUM, (subsel == 3) ? WHITE : BLACK, (subsel == 3) ? BLACK : WHITE);
     }
     if (sel == 3) {
         LCDClearScreen();
-        LCDPutStr("1. obraz 1", 20, 20, (subsel == 0) ? BLACK : WHITE, (subsel == 0) ? WHITE : BLACK);
-        LCDPutStr("2. obraz 2", 40, 20, (subsel == 1) ? BLACK : WHITE, (subsel == 1) ? WHITE : BLACK);
+        LCDPutStr("1.obraz 1", 20, 5, MEDIUM, (subsel == 0) ? WHITE : BLACK, (subsel == 0) ? BLACK : WHITE);
+        LCDPutStr("2.obraz 2", 40, 5, MEDIUM, (subsel == 1) ? WHITE : BLACK, (subsel == 1) ? BLACK : WHITE);
     }
 }
 
 void showContent (int sel, int subsel) {
     LCDClearScreen();
     if (sel == 0) {
-        LCDPutStr("Marcin Basak", 20, 20, WHITE, BLACK);
-        LCDPutStr("5.1", 40, 20, WHITE, BLACK);
+        LCDPutStr("Marcin Basak", 20, 20, MEDIUM, BLACK, WHITE);
+        LCDPutStr("5.1", 40, 20, MEDIUM, BLACK, WHITE);
     }
     if (sel == 1) {
-        if (subsel == 0) LCDSetCircle(65, 65, 10, WHITE);
-        if (subsel == 1) LCDSetRect(40, 40, 80, 80, BLACK, WHITE);
+        if (subsel == 0) LCDSetCircle(65, 65, 10, BLACK);
+        if (subsel == 1) LCDSetRect(40, 40, 80, 80, WHITE, BLACK);
         if (subsel == 2) {
-            LCDSetLine(40, 40, 40, 50, WHITE);
-            LCDSetLine(40, 40, 50, 45, WHITE);
-            LCDSetLine(40, 50, 50, 45, WHITE);
+            LCDSetLine(40, 40, 40, 50, BLACK);
+            LCDSetLine(40, 40, 50, 45, BLACK);
+            LCDSetLine(40, 50, 50, 45, BLACK);
         }
         if (subsel == 3) {
-            LCDSetLine(40, 40, 40, 80, WHITE);
-            LCDSetLine(40, 40, 60, 50, WHITE);
-            LCDSetLine(40, 80, 60, 70, WHITE);
-            LCDSetLine(60, 50, 60, 70, WHITE);
+            LCDSetLine(40, 40, 40, 80, BLACK);
+            LCDSetLine(40, 40, 60, 50, BLACK);
+            LCDSetLine(40, 80, 60, 70, BLACK);
+            LCDSetLine(60, 50, 60, 70, BLACK);
         }
     }
     if (sel == 2) {
@@ -56,7 +56,7 @@ void showContent (int sel, int subsel) {
         if (subsel == 1) LCDWrite130x130bmp();
     }
     if (sel == 3) {
-        LCDPutStr("Marcin Basak", 20, 20, WHITE, BLACK);
+        LCDPutStr("Marcin Basak", 20, 20, MEDIUM, WHITE, BLACK);
         LCDWrite130x130bmp();
     }
 }
@@ -74,7 +74,7 @@ int main () {
     showMainMenu(selection[0]);
     while (1) {
         // Powrot
-        if ((PIOA_PDSR & 1 << 8) == 0 || (PIOB_PDSR & 1 << 23) == 0) {
+        /*if ((PIOA_PDSR & 1 << 8) == 0 || (PIOB_PDSR & 1 << 23) == 0) {
             if (depth > 0) {
                 depth--;
                 if (depth == 0) {
@@ -83,10 +83,10 @@ int main () {
                 }
                 if (depth == 1 && depth < maxdepths[selection[0]]) showSubmenu(selection[0], selection[1]);
             }
-        }
+        }*/
         // Enter
         if ((PIOA_PDSR & 1 << 9) == 0 || (PIOA_PDSR & 1 << 15) == 0 || (PIOB_PDSR & 1 << 24) == 0) {
-            if (depth < maxdepth[selection[0]]) {
+            if (depth < maxdepths[selection[0]]) {
                 depth++;
                 if (depth == 1) {
                     if (depth < maxdepths[selection[0]]) showSubmenu(selection[0], selection[1]);
@@ -96,7 +96,7 @@ int main () {
             }
         }
         // Gora
-        if ((PIOA_PDSR & 1 << 7) == 0) {
+        /*if ((PIOA_PDSR & 1 << 7) == 0) {
             if (depth < maxdepths[selection[0]]) {
                 selection[depth]++;
                 if (depth == 0) {
@@ -108,9 +108,9 @@ int main () {
                     showSubmenu(selection[0], selection[1]);
                 }
             }
-        }
+        }*/
         // Dol
-        if ((PIOA_PDSR & 1 << 14) == 0) {
+        /*if ((PIOA_PDSR & 1 << 14) == 0) {
             if (depth < maxdepths[selection[0]]) {
                 selection[depth]--;
                 if (depth == 0) {
@@ -122,6 +122,6 @@ int main () {
                     showSubmenu(selection[0], selection[1]);
                 }
             }
-        }
+        }*/
     }
 }
