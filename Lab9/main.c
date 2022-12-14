@@ -17,25 +17,25 @@ void czas(int ms){
 void showMainMenu (int sel) {
     LCDClearScreen();
     // Glowne Menu: Zaznaczona opcja - czarny tekst na bialym tle
-    LCDPutStr("1.Autor", 20, 5, MEDIUM, (sel == 0) ? WHITE : BLACK, (sel == 0) ? BLACK : WHITE);
-    LCDPutStr("2.Figury", 40, 5, MEDIUM, (sel == 1) ? WHITE : BLACK, (sel == 1) ? BLACK : WHITE);
-    LCDPutStr("3.Obraz", 60, 5, MEDIUM, (sel == 2) ? WHITE : BLACK, (sel == 2) ? BLACK : WHITE);
-    LCDPutStr("4.Tekst i obraz", 80, 5, MEDIUM, (sel == 3) ? WHITE : BLACK, (sel == 3) ? BLACK : WHITE);
+    LCDPutStr("1.Autor", 20, 5, MEDIUM, (sel == 0) ? GREEN : BLACK, (sel == 0) ? BLACK : WHITE);
+    LCDPutStr("2.Figury", 40, 5, MEDIUM, (sel == 1) ? GREEN : BLACK, (sel == 1) ? BLACK : WHITE);
+    LCDPutStr("3.Obraz", 60, 5, MEDIUM, (sel == 2) ? GREEN : BLACK, (sel == 2) ? BLACK : WHITE);
+    LCDPutStr("4.Tekst i obraz", 80, 5, MEDIUM, (sel == 3) ? GREEN : BLACK, (sel == 3) ? BLACK : WHITE);
 }
 
 void showSubmenu (int sel, int subsel) {
     if (sel == 0 || sel == 3) return;
     if (sel == 1) {
         LCDClearScreen();
-        LCDPutStr("1.okrag", 20, 5, MEDIUM, (subsel == 0) ? WHITE : BLACK, (subsel == 0) ? BLACK : WHITE);
-        LCDPutStr("2.kwadrat", 40, 5, MEDIUM, (subsel == 1) ? WHITE : BLACK, (subsel == 1) ? BLACK : WHITE);
-        LCDPutStr("3.trojkat", 60, 5, MEDIUM, (subsel == 2) ? WHITE : BLACK, (subsel == 2) ? BLACK : WHITE);
-        LCDPutStr("4.trapez", 80, 5, MEDIUM, (subsel == 3) ? WHITE : BLACK, (subsel == 3) ? BLACK : WHITE);
+        LCDPutStr("1.okrag", 20, 5, MEDIUM, (subsel == 0) ? BLUE : BLACK, (subsel == 0) ? BLACK : WHITE);
+        LCDPutStr("2.kwadrat", 40, 5, MEDIUM, (subsel == 1) ? BLUE : BLACK, (subsel == 1) ? BLACK : WHITE);
+        LCDPutStr("3.trojkat", 60, 5, MEDIUM, (subsel == 2) ? BLUE : BLACK, (subsel == 2) ? BLACK : WHITE);
+        LCDPutStr("4.trapez", 80, 5, MEDIUM, (subsel == 3) ? BLUE : BLACK, (subsel == 3) ? BLACK : WHITE);
     }
     if (sel == 2) {
         LCDClearScreen();
-        LCDPutStr("1.obraz 1", 20, 5, MEDIUM, (subsel == 0) ? WHITE : BLACK, (subsel == 0) ? BLACK : WHITE);
-        LCDPutStr("2.obraz 2", 40, 5, MEDIUM, (subsel == 1) ? WHITE : BLACK, (subsel == 1) ? BLACK : WHITE);
+        LCDPutStr("1.obraz 1", 20, 5, MEDIUM, (subsel == 0) ? BLUE : BLACK, (subsel == 0) ? BLACK : WHITE);
+        LCDPutStr("2.obraz 2", 40, 5, MEDIUM, (subsel == 1) ? BLUE : BLACK, (subsel == 1) ? BLACK : WHITE);
     }
 }
 
@@ -65,15 +65,15 @@ void showContent (int sel, int subsel) {
         if (subsel == 1) LCDWrite130x130bmp();
     }
     if (sel == 3) {
-        LCDPutStr("Marcin Basak", 20, 20, MEDIUM, WHITE, BLACK);
         LCDWrite130x130bmp();
+        LCDPutStr("Marcin Basak", 20, 20, MEDIUM, BLACK, WHITE);
     }
 }
 
 int main () {
     PMC_PCER = 1 << 3;
     PMC_PCER |= 1 << 2;
-    PIOA_PER |= (1 << 7 | 1 << 8 | 1 << 9 | 1 << 14 | 1 << 15);// Kontrola joysticka (7 - lewo, 8 - dol, 9 - gora, 14 - prawo, 15 - wcisniecie)
+    PIOA_PER |= (1 << 7 | 1 << 8 | 1 << 9 | 1 << 14 | 1 << 15); // Kontrola joysticka (7 - lewo, 8 - dol, 9 - gora, 14 - prawo, 15 - wcisniecie)
     PIOB_PER |= (1 << 24 | 1 << 25);  // Kontrola - przycisk lewy i prawy
     PIOB_ODR = (1 << 24 | 1 << 25);   // Przyciski jako wejscie
     PIOA_ODR = (1 << 7 | 1 << 8 | 1 << 9 | 1 << 14 | 1 << 15);  // Joystick jako wejscie
