@@ -1,0 +1,7 @@
+Jaki jest najdłuższy możliwy okres wyznaczany pomiędzy kolejnymi inkrementacjami sumatora PICNT timera PIT przy MCK = 16MHz?
+MCK = 16 MHz
+Częstotliwość inkrementacji dla PICNT wynosi MCK/16 = 1 MHz
+PICNT jest 12-bitowy
+Liczba elementarnych okresów: 2^12 = 4096
+Najdłuższy możliwy okres:
+T = 4096 / 1,000,000 = 0,004096 s
