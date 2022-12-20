@@ -1,0 +1,1 @@
+To rozwiązanie jest jednym z różnych. 5 sekund możemy odliczyć na różne sposoby zmieniając liczbę odczytów elementarnych inkrementacji licznika.
