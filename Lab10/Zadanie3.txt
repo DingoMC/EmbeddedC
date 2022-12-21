@@ -1,2 +1,4 @@
 Jaka jest najniższa częstotliwość możliwa do odliczenia przez kolejne przepełnienia timera TC0 układu AtmelSAM7X256 przy MCK = 128MHz.
-Najniższą częstotliwość uzyskamy korzystając z TIMER_CLOCK5 o taktowaniu MCK / 1024 = 128MHz / 1024 =  0.125MHz
+TC0 ma długoś 16 bitów. Prepełnienie wystąpi po 2^16 = 65536 cyklach
+Najniższą częstotliwość uzyskamy korzystając z TIMER_CLOCK5 o taktowaniu MCK / 1024
+65536 /(128MHz / 1024) =  0.524288 Hz
