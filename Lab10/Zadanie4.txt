@@ -1,4 +1,1 @@
-Tak jest to możliwe.
-W przykładzie drugim podany jest wzór na wyznaczenie interwału sekundowego.
-Wzór posiada 3 zmienne: MCK, TIMER_CLOCK i RC
-MCK jest ustalone z góry, zatem zmieniając dzielnik częstotliwości na inny w kodzie programu musimy również zmienić wartość RC na inną, aby nadal zliczać sekundowy interwał.
+W tym przykładzie nie można wykorzystać innego dzielnika, ponieważ przy wyborze innego dla uzyskania sekundowego interwału, wartość RC musiałaby przekroczyć wartość przy której następuje przerwanie.
